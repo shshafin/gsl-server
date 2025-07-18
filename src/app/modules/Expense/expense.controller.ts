@@ -3,6 +3,9 @@ import httpStatus from 'http-status';
 import catchAsync from '../../shared/catchAsync';
 import sendResponse from '../../shared/sendResponse';
 import { ExpenseService } from './expense.service';
+import { expenseFilterableFields } from './expense.constants';
+import { paginationFields } from '../../constants/constants';
+import pick from '../../shared/pick';
 
 const createExpense = catchAsync(async (req: Request, res: Response) => {
   const result = await ExpenseService.createExpense(req.body);
@@ -15,13 +18,22 @@ const createExpense = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllExpenses = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user?._id;
-  const result = await ExpenseService.getAllExpenses(userId);
+  const filters = pick(req.query, expenseFilterableFields);
+  const paginationOptions = pick(req.query, paginationFields);
+  const userId = req.user._id;
+
+  const result = await ExpenseService.getAllExpenses(
+    userId,
+    filters,
+    paginationOptions,
+  );
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Expenses fetched successfully',
-    data: result,
+    message: 'Expenses fetched successfully!',
+    meta: result.meta,
+    data: result.data,
   });
 });
 

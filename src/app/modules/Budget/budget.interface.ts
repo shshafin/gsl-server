@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 
 export interface IBudget {
   _id?: Types.ObjectId;
-  userId: Types.ObjectId;
+  accountId: Types.ObjectId;
   categoryId: Types.ObjectId;
   amount: number;
   note?: string;

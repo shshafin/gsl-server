@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IBudget } from './budget.interface';
 import { Budget } from './budget.model';
 
@@ -6,9 +7,36 @@ const createBudget = async (payload: IBudget) => {
   return result;
 };
 
-const getBudgetsByUser = async (userId: string) => {
-  const budgets = await Budget.find({ userId }).populate('categoryId');
-  return budgets;
+const getBudgetsByAccount = async (
+  filters: { type?: string; categoryId?: string },
+  options: { page?: number; limit?: number },
+) => {
+  const { type, categoryId } = filters;
+  const { page = 1, limit = 10 } = options;
+
+  const skip = (page - 1) * limit;
+
+  const query: any = {};
+  if (type) query.type = type;
+  if (categoryId) query.categoryId = categoryId;
+
+  const budgets = await Budget.find(query)
+    .populate('categoryId')
+    .populate('accountId')
+    .skip(skip)
+    .limit(limit)
+    .sort({ createdAt: -1 });
+
+  const total = await Budget.countDocuments(query);
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: budgets,
+  };
 };
 
 const getSingleBudget = async (id: string) => {
@@ -28,7 +56,7 @@ const deleteBudget = async (id: string) => {
 
 export const BudgetService = {
   createBudget,
-  getBudgetsByUser,
+  getBudgetsByAccount,
   getSingleBudget,
   updateBudget,
   deleteBudget,

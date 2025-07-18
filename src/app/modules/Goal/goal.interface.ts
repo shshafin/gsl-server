@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 
 export interface IGoal {
   _id?: Types.ObjectId;
-  userId: Types.ObjectId;
+  accountId: Types.ObjectId;
   title: string;
   targetAmount: number;
   currentAmount?: number;
@@ -11,4 +11,10 @@ export interface IGoal {
   categoryId?: Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
+}
+
+export interface IGoalFilters {
+  searchTerm?: string;
+  title?: string;
+  categoryId?: string;
 }
