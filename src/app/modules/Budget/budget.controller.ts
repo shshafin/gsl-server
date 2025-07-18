@@ -15,13 +15,22 @@ const createBudget = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getBudgets = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user._id;
-  const result = await BudgetService.getBudgetsByUser(userId);
+  const { page, limit, type, categoryId } = req.query;
+
+  const result = await BudgetService.getBudgetsByAccount(
+    { type: type as string, categoryId: categoryId as string },
+    {
+      page: Number(page) || 1,
+      limit: Number(limit) || 10,
+    },
+  );
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Budgets fetched successfully',
-    data: result,
+    meta: result.meta,
+    data: result.data,
   });
 });
 

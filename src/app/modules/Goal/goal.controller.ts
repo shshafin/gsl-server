@@ -3,10 +3,12 @@ import { GoalServices } from './goal.service';
 import catchAsync from '../../shared/catchAsync';
 import sendResponse from '../../shared/sendResponse';
 import httpStatus from 'http-status';
+import pick from '../../shared/pick';
+import { goalFilterableFields } from './goal.constant';
+import { paginationFields } from '../Expense/expense.constants';
 
 const createGoal = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user._id;
-  const goal = await GoalServices.createGoal(userId, req.body);
+  const goal = await GoalServices.createGoal(req.body);
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
@@ -16,8 +18,7 @@ const createGoal = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getGoalById = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user._id;
-  const goal = await GoalServices.getGoalById(req.params.id, userId);
+  const goal = await GoalServices.getGoalById(req.params.id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -26,12 +27,7 @@ const getGoalById = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateGoal = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user._id;
-  const updatedGoal = await GoalServices.updateGoal(
-    req.params.id,
-    userId,
-    req.body,
-  );
+  const updatedGoal = await GoalServices.updateGoal(req.params.id, req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -41,8 +37,7 @@ const updateGoal = catchAsync(async (req: Request, res: Response) => {
 });
 
 const deleteGoal = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user._id;
-  const deletedGoal = await GoalServices.deleteGoal(req.params.id, userId);
+  const deletedGoal = await GoalServices.deleteGoal(req.params.id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -52,12 +47,17 @@ const deleteGoal = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllGoals = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user._id;
-  const goals = await GoalServices.getAllGoals(userId);
+  const filters = pick(req.query, goalFilterableFields);
+  const paginationOptions = pick(req.query, paginationFields);
+
+  const result = await GoalServices.getAllGoals(filters, paginationOptions);
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    data: goals,
+    message: 'Goals fetched successfully!',
+    meta: result.meta,
+    data: result.data,
   });
 });
 

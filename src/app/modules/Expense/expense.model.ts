@@ -3,7 +3,7 @@ import { IExpense } from './expense.interface';
 
 const expenseSchema = new Schema<IExpense>(
   {
-    userId: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
+    accountId: { type: Schema.Types.ObjectId, required: true, ref: 'Account' },
     categoryId: {
       type: Schema.Types.ObjectId,
       required: true,

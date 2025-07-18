@@ -4,6 +4,9 @@ import httpStatus from 'http-status';
 import { CategoryService } from './category.service';
 import catchAsync from '../../shared/catchAsync';
 import sendResponse from '../../shared/sendResponse';
+import pick from '../../shared/pick';
+import { categoryFilterableFields } from './category.constants';
+import { paginationFields } from '../../constants/constants';
 
 const createCategory = catchAsync(async (req: Request, res: Response) => {
   const result = await CategoryService.createCategory(req.body);
@@ -16,12 +19,20 @@ const createCategory = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllCategories = catchAsync(async (req: Request, res: Response) => {
-  const result = await CategoryService.getAllCategories();
+  const filters = pick(req.query, categoryFilterableFields);
+  const paginationOptions = pick(req.query, paginationFields);
+
+  const result = await CategoryService.getAllCategories(
+    filters,
+    paginationOptions,
+  );
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Categories fetched successfully!',
-    data: result,
+    meta: result.meta,
+    data: result.data,
   });
 });
 

@@ -5,6 +5,8 @@ import { CategoryRoutes } from '../modules/Category/category.route';
 import { ExpenseRoutes } from '../modules/Expense/expense.route';
 import { BudgetRoutes } from '../modules/Budget/budget.route';
 import { GoalRoutes } from '../modules/Goal/goal.route';
+import { AccountRoutes } from '../modules/Accounts/accounts.route';
+import { TransactionRoutes } from '../modules/Transaction/transaction.route';
 
 const router = Router();
 
@@ -32,6 +34,14 @@ const moduleRoute = [
   {
     path: '/goals',
     route: GoalRoutes,
+  },
+  {
+    path: '/accounts',
+    route: AccountRoutes,
+  },
+  {
+    path: '/transactions',
+    route: TransactionRoutes,
   },
 ];
 

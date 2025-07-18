@@ -3,6 +3,7 @@ import cors from 'cors';
 import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import notFound from './app/middlewares/notFound';
 import router from './app/routes';
+import csvImportRoute from './app/csvImport.route';
 
 const app: Application = express();
 
@@ -12,6 +13,8 @@ app.use(cors());
 
 // routes
 app.use('/api/v1', router);
+
+app.use('/api', csvImportRoute);
 
 // global error handler
 app.use(globalErrorHandler);
