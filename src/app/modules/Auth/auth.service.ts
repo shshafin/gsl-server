@@ -47,7 +47,7 @@ const loginExistingUser = async (payload: TUserLogin) => {
       username: user.username,
       email: user.email,
     },
-    token: accessToken,
+    accessToken: accessToken,
   };
 };
 
