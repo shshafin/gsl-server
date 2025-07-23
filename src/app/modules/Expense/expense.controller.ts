@@ -20,10 +20,8 @@ const createExpense = catchAsync(async (req: Request, res: Response) => {
 const getAllExpenses = catchAsync(async (req: Request, res: Response) => {
   const filters = pick(req.query, expenseFilterableFields);
   const paginationOptions = pick(req.query, paginationFields);
-  const userId = req.user._id;
 
   const result = await ExpenseService.getAllExpenses(
-    userId,
     filters,
     paginationOptions,
   );

@@ -1,5 +1,7 @@
-import { RequestHandler } from 'express';
-import { UserServices } from './user.service';
+import { RequestHandler, Request, Response } from 'express';
+import { getSingleUserByEmail, UserServices } from './user.service';
+import sendResponse from '../../shared/sendResponse';
+import httpStatus from 'http-status';
 
 const createUser: RequestHandler = async (req, res, next) => {
   try {
@@ -22,6 +24,18 @@ const createUser: RequestHandler = async (req, res, next) => {
   }
 };
 
+const FindSingleUser = async (req: Request, res: Response) => {
+  const email = req.params.email;
+  const result = await getSingleUserByEmail(email);
+  sendResponse<any>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Get Single User successfully',
+    data: result,
+  });
+};
+
 export const UserControllers = {
   createUser,
+  FindSingleUser,
 };
