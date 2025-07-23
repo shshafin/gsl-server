@@ -19,7 +19,12 @@ const createCategory = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllCategories = catchAsync(async (req: Request, res: Response) => {
-  const filters = pick(req.query, categoryFilterableFields);
+  // searchTerm ke alada niye ashchi, baki filters pick kore
+  const filters = {
+    searchTerm: req.query.searchTerm as string | undefined,
+    ...pick(req.query, categoryFilterableFields),
+  };
+
   const paginationOptions = pick(req.query, paginationFields);
 
   const result = await CategoryService.getAllCategories(

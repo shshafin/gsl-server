@@ -6,6 +6,7 @@ import {
 } from './category.interface';
 import { SortOrder } from 'mongoose';
 import { paginationHelpers } from '../../helpers/paginationHelper';
+import { categorySearchableFields } from './category.constants';
 
 const createCategory = async (payload: ICategory) => {
   const category = await Category.create(payload);
@@ -22,10 +23,10 @@ const getAllCategories = async (
 
   const andConditions = [];
 
-  if (searchTerm) {
+  if (searchTerm && searchTerm.trim() !== '') {
     andConditions.push({
-      $or: ['name'].map((field) => ({
-        [field]: { $regex: searchTerm, $options: 'i' },
+      $or: categorySearchableFields.map((field) => ({
+        [field]: { $regex: searchTerm.trim(), $options: 'i' },
       })),
     });
   }

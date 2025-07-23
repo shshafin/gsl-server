@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express';
 import { AuthServices } from './auth.service';
 import { JwtPayload } from 'jsonwebtoken';
+import { getSingleUserByEmail } from '../User/user.service';
 
 const userLogin: RequestHandler = async (req, res, next) => {
   try {
@@ -29,6 +30,22 @@ const changePassword: RequestHandler = async (req, res, next) => {
     });
   } catch (err) {
     next(err);
+  }
+};
+
+export const getCurrentUser: RequestHandler = async (req, res, next) => {
+  try {
+    const email = (req.user as any).email; // decoded token
+    const user = await getSingleUserByEmail(email);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json(user);
+  } catch (err) {
+    next(err);
+    res.status(500).json({ message: 'Something went wrong', error: err });
   }
 };
 
