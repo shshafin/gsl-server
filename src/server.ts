@@ -2,38 +2,36 @@
 import app from './app';
 import config from './app/config';
 import mongoose from 'mongoose';
+import { Server } from 'http';
 
+let server: Server;
 const port = config.port;
 
-// Connect to MongoDB
-async function connectDB() {
+async function main() {
   try {
     await mongoose.connect(config.db_url as string);
-    console.log('✅ MongoDB connected');
+
+    server = app.listen(port, () => {
+      console.log(`Example app listening on port ${port}`);
+    });
   } catch (err) {
-    console.error('❌ MongoDB connection failed:', err);
-    process.exit(1);
+    console.log(err);
   }
 }
 
-connectDB();
+main();
 
-// Start server **only in local/dev**
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(port, () => {
-    console.log(`🚀 Server running locally on port ${port}`);
-  });
+process.on('unhandledRejection', () => {
+  console.log(`😈🙉 unhandledRejection is detected. Shutting down...`);
+  if (server) {
+    server.close(() => {
+      process.exit(1);
+    });
+  }
+  process.exit(1);
+});
 
-  process.on('unhandledRejection', () => {
-    console.log('😈🙉 UnhandledRejection detected. Shutting down...');
-    process.exit(1);
-  });
-
-  process.on('uncaughtException', () => {
-    console.log('😈🙉 UncaughtException detected. Shutting down...');
-    process.exit(1);
-  });
-}
-
-// Export for Vercel
-export default app;
+process.on('uncaughtException', () => {
+  console.log(`😈🙉 uncaughtException is detected. Shutting down...`);
+  process.exit(1);
+});
