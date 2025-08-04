@@ -1,6 +1,7 @@
 import { Types } from 'mongoose';
 
 export interface ITransaction {
+  userId: Types.ObjectId; // User who owns the transaction
   accountId: Types.ObjectId | string; // Account linked to transaction
   categoryId: Types.ObjectId | string; // Category of the transaction
   description?: string; // Optional description/details

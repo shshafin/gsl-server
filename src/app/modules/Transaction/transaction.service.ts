@@ -43,17 +43,22 @@ const calculatePagination = (options: IPaginationOptions) => {
 
 const createTransaction = async (
   payload: ITransaction,
+  userId: string,
 ): Promise<ITransaction> => {
-  const transaction = await Transaction.create(payload);
+  const transaction = await Transaction.create({ ...payload, userId });
   return transaction;
 };
 
 const getAllTransactions = async (
   filters: IFilters,
   options: IPaginationOptions,
+  userId: string,
 ): Promise<IGenericResponse<ITransaction[]>> => {
   const { page, limit, skip, sortBy, sortOrder } = calculatePagination(options);
   const andConditions: FilterQuery<ITransaction>[] = [];
+
+  // Always filter by userId
+  andConditions.push({ userId });
 
   // Filtering by accountId, categoryId, type
   if (filters.accountId) {
@@ -109,27 +114,39 @@ const getAllTransactions = async (
 
 const getSingleTransaction = async (
   id: string,
+  userId: string,
 ): Promise<ITransaction | null> => {
-  const transaction = await Transaction.findById(id);
+  const transaction = await Transaction.findOne({ _id: id, userId });
   return transaction;
 };
 
 const updateTransaction = async (
   id: string,
   payload: Partial<ITransaction>,
+  userId: string,
 ): Promise<ITransaction | null> => {
-  const updated = await Transaction.findByIdAndUpdate(id, payload, {
-    new: true,
-  });
+  const updated = await Transaction.findOneAndUpdate(
+    { _id: id, userId },
+    payload,
+    { new: true },
+  );
   return updated;
 };
 
-const deleteTransaction = async (id: string): Promise<ITransaction | null> => {
-  const deleted = await Transaction.findByIdAndDelete(id);
+const deleteTransaction = async (
+  id: string,
+  userId: string,
+): Promise<ITransaction | null> => {
+  const deleted = await Transaction.findOneAndDelete({ _id: id, userId });
   return deleted;
 };
 
-const importTransactionsFromCSV = async (filePath: string): Promise<void> => {
+import { Types } from 'mongoose';
+
+const importTransactionsFromCSV = async (
+  filePath: string,
+  userId: string,
+): Promise<void> => {
   const rows: any[] = [];
 
   return new Promise((resolve, reject) => {
@@ -155,6 +172,7 @@ const importTransactionsFromCSV = async (filePath: string): Promise<void> => {
             }
 
             const transaction: ITransaction = {
+              userId: new Types.ObjectId(userId), // <-- added here
               accountId: account._id,
               categoryId: category._id,
               description: row.description || 'N/A',

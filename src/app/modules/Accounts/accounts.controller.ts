@@ -7,9 +7,15 @@ import {
   getSingleAccountService,
   updateAccountService,
 } from './accounts.service';
+import httpStatus from 'http-status';
+import sendResponse from '../../shared/sendResponse';
+import { paginationFields } from '../../constants/constants';
+import pick from '../../shared/pick';
+import { accountFilterableFields } from './accounts.constants';
 
 export const createAccount = catchAsync(async (req: Request, res: Response) => {
-  const account = await createAccountService(req.body);
+  const userId = req.user._id;
+  const account = await createAccountService(req.body, userId);
   res.status(201).json({
     success: true,
     message: 'Account created successfully',
@@ -19,11 +25,26 @@ export const createAccount = catchAsync(async (req: Request, res: Response) => {
 
 export const getAllAccounts = catchAsync(
   async (req: Request, res: Response) => {
-    const accounts = await getAllAccountsService();
-    res.status(200).json({
+    const filters = {
+      searchTerm: req.query.searchTerm as string | undefined,
+      ...pick(req.query, accountFilterableFields),
+    };
+
+    const paginationOptions = pick(req.query, paginationFields);
+    const userId = req.user._id;
+
+    const result = await getAllAccountsService(
+      filters,
+      paginationOptions,
+      userId,
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
       message: 'Accounts retrieved successfully',
-      data: accounts,
+      meta: result.meta,
+      data: result.data,
     });
   },
 );
@@ -31,7 +52,8 @@ export const getAllAccounts = catchAsync(
 export const getSingleAccount = catchAsync(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const account = await getSingleAccountService(id);
+    const userId = req.user._id;
+    const account = await getSingleAccountService(id, userId);
     res.status(200).json({
       success: true,
       message: 'Account retrieved successfully',
@@ -42,7 +64,8 @@ export const getSingleAccount = catchAsync(
 
 export const updateAccount = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const updated = await updateAccountService(id, req.body);
+  const userId = req.user._id;
+  const updated = await updateAccountService(id, req.body, userId);
   res.status(200).json({
     success: true,
     message: 'Account updated successfully',
@@ -52,7 +75,8 @@ export const updateAccount = catchAsync(async (req: Request, res: Response) => {
 
 export const deleteAccount = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  await deleteAccountService(id);
+  const userId = req.user._id;
+  await deleteAccountService(id, userId);
   res.status(200).json({
     success: true,
     message: 'Account deleted successfully',

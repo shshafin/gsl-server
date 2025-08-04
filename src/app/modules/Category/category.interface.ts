@@ -1,9 +1,10 @@
-import { SortOrder } from 'mongoose';
+import { SortOrder, Types } from 'mongoose';
 
 export type TCategoryType = 'essential' | 'non-essential' | 'debt';
 
 export interface ICategory {
   _id?: string;
+  userId: Types.ObjectId; // assuming categories are user-specific
   name: string;
   type: TCategoryType;
   icon?: string; // optional icon string (e.g., 'home', 'bag', etc.)

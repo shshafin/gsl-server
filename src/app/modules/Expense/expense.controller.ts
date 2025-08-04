@@ -8,7 +8,8 @@ import { paginationFields } from '../../constants/constants';
 import pick from '../../shared/pick';
 
 const createExpense = catchAsync(async (req: Request, res: Response) => {
-  const result = await ExpenseService.createExpense(req.body);
+  const userId = req.user._id;
+  const result = await ExpenseService.createExpense(req.body, userId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -21,9 +22,11 @@ const getAllExpenses = catchAsync(async (req: Request, res: Response) => {
   const filters = pick(req.query, expenseFilterableFields);
   const paginationOptions = pick(req.query, paginationFields);
 
+  const userId = req.user._id;
   const result = await ExpenseService.getAllExpenses(
     filters,
     paginationOptions,
+    userId,
   );
 
   sendResponse(res, {
@@ -37,7 +40,8 @@ const getAllExpenses = catchAsync(async (req: Request, res: Response) => {
 
 const getSingleExpense = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id;
-  const result = await ExpenseService.getSingleExpense(id);
+  const userId = req.user._id;
+  const result = await ExpenseService.getSingleExpense(id, userId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -48,7 +52,8 @@ const getSingleExpense = catchAsync(async (req: Request, res: Response) => {
 
 const updateExpense = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id;
-  const result = await ExpenseService.updateExpense(id, req.body);
+  const userId = req.user._id;
+  const result = await ExpenseService.updateExpense(id, req.body, userId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -59,7 +64,8 @@ const updateExpense = catchAsync(async (req: Request, res: Response) => {
 
 const deleteExpense = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id;
-  const result = await ExpenseService.deleteExpense(id);
+  const userId = req.user._id;
+  const result = await ExpenseService.deleteExpense(id, userId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

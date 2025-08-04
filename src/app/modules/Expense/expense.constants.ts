@@ -2,6 +2,7 @@ export const expenseFilterableFields = [
   'searchTerm',
   'categoryId',
   'type',
-  'date',
+  'dateFrom',
+  'dateTo',
 ];
 export const paginationFields = ['page', 'limit', 'sortBy', 'sortOrder'];

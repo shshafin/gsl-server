@@ -1,6 +1,7 @@
 import { Types } from 'mongoose';
 
 export interface IBudget {
+  userId: Types.ObjectId; // assuming budgets are user-specific
   _id?: Types.ObjectId;
   accountId: Types.ObjectId;
   categoryId: Types.ObjectId;

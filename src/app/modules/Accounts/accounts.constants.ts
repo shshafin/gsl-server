@@ -14,3 +14,5 @@ export const financialInstitutionImages: Record<string, string> = {
   'TD Canada Trust - EasyWeb':
     'https://i.ibb.co/wFSJrSHB/Toronto-Dominion-Bank-logo-svg.png',
 };
+
+export const accountFilterableFields = ['accountType', 'financialInstitution'];

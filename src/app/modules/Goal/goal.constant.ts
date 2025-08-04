@@ -1,1 +1,1 @@
-export const goalFilterableFields = ['searchTerm', 'status', 'type'];
+export const goalFilterableFields = ['searchTerm', 'categoryId', 'accountId'];

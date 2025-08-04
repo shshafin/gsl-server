@@ -8,20 +8,24 @@ import { SortOrder } from 'mongoose';
 import { paginationHelpers } from '../../helpers/paginationHelper';
 import { categorySearchableFields } from './category.constants';
 
-const createCategory = async (payload: ICategory) => {
-  const category = await Category.create(payload);
+const createCategory = async (payload: ICategory, userId: string) => {
+  const category = await Category.create({ ...payload, userId });
   return category;
 };
 
 const getAllCategories = async (
   filters: ICategoryFilters,
   paginationOptions: IPaginationOptions,
+  userId: string,
 ) => {
   const { searchTerm, ...filtersData } = filters;
   const { limit, page, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(paginationOptions);
 
-  const andConditions = [];
+  const andConditions: any[] = [];
+
+  // Add userId filter here
+  andConditions.push({ userId });
 
   if (searchTerm && searchTerm.trim() !== '') {
     andConditions.push({
@@ -65,18 +69,28 @@ const getAllCategories = async (
   };
 };
 
-const getSingleCategory = async (id: string) => {
-  const category = await Category.findById(id).populate('parentCategory');
+const getSingleCategory = async (id: string, userId: string) => {
+  const category = await Category.findOne({ _id: id, userId }).populate(
+    'parentCategory',
+  );
   return category;
 };
 
-const updateCategory = async (id: string, payload: Partial<ICategory>) => {
-  const updated = await Category.findByIdAndUpdate(id, payload, { new: true });
+const updateCategory = async (
+  id: string,
+  payload: Partial<ICategory>,
+  userId: string,
+) => {
+  const updated = await Category.findOneAndUpdate(
+    { _id: id, userId },
+    payload,
+    { new: true },
+  );
   return updated;
 };
 
-const deleteCategory = async (id: string) => {
-  const result = await Category.findByIdAndDelete(id);
+const deleteCategory = async (id: string, userId: string) => {
+  const result = await Category.findOneAndDelete({ _id: id, userId });
   return result;
 };
 

@@ -5,7 +5,8 @@ import catchAsync from '../../shared/catchAsync';
 import sendResponse from '../../shared/sendResponse';
 
 const createBudget = catchAsync(async (req: Request, res: Response) => {
-  const result = await BudgetService.createBudget(req.body);
+  const userId = req.user._id;
+  const result = await BudgetService.createBudget(req.body, userId);
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
@@ -17,12 +18,14 @@ const createBudget = catchAsync(async (req: Request, res: Response) => {
 const getBudgets = catchAsync(async (req: Request, res: Response) => {
   const { page, limit, type, categoryId } = req.query;
 
+  const userId = req.user._id;
   const result = await BudgetService.getBudgetsByAccount(
     { type: type as string, categoryId: categoryId as string },
     {
       page: Number(page) || 1,
       limit: Number(limit) || 10,
     },
+    userId,
   );
 
   sendResponse(res, {
@@ -36,7 +39,8 @@ const getBudgets = catchAsync(async (req: Request, res: Response) => {
 
 const getSingleBudget = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await BudgetService.getSingleBudget(id);
+  const userId = req.user._id;
+  const result = await BudgetService.getSingleBudget(id, userId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -47,7 +51,8 @@ const getSingleBudget = catchAsync(async (req: Request, res: Response) => {
 
 const updateBudget = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await BudgetService.updateBudget(id, req.body);
+  const userId = req.user._id;
+  const result = await BudgetService.updateBudget(id, req.body, userId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -58,7 +63,8 @@ const updateBudget = catchAsync(async (req: Request, res: Response) => {
 
 const deleteBudget = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await BudgetService.deleteBudget(id);
+  const userId = req.user._id;
+  const result = await BudgetService.deleteBudget(id, userId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
