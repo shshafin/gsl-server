@@ -6,7 +6,8 @@ import sendResponse from '../../shared/sendResponse';
 
 const createTransaction = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
-  const result = await TransactionService.createTransaction(payload);
+  const userId = req.user._id; // Ensure userId is set from the request context
+  const result = await TransactionService.createTransaction(payload, userId);
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
@@ -19,9 +20,11 @@ const getAllTransactions = catchAsync(async (req: Request, res: Response) => {
   const filters = req.query;
   const paginationOptions = req.query;
 
+  const userId = req.user._id; // Get userId from the request context
   const result = await TransactionService.getAllTransactions(
     filters,
     paginationOptions,
+    userId,
   );
 
   sendResponse(res, {
@@ -35,7 +38,8 @@ const getAllTransactions = catchAsync(async (req: Request, res: Response) => {
 
 const getSingleTransaction = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await TransactionService.getSingleTransaction(id);
+  const userId = req.user._id; // Get userId from the request context
+  const result = await TransactionService.getSingleTransaction(id, userId);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -49,7 +53,12 @@ const updateTransaction = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const payload = req.body;
 
-  const result = await TransactionService.updateTransaction(id, payload);
+  const userId = req.user._id; // Get userId from the request context
+  const result = await TransactionService.updateTransaction(
+    id,
+    payload,
+    userId,
+  );
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -61,7 +70,8 @@ const updateTransaction = catchAsync(async (req: Request, res: Response) => {
 
 const deleteTransaction = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await TransactionService.deleteTransaction(id);
+  const userId = req.user._id; // Get userId from the request context
+  const result = await TransactionService.deleteTransaction(id, userId);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -78,7 +88,8 @@ const importCSV = catchAsync(async (req: Request, res: Response) => {
       .json({ success: false, message: 'CSV file is required' });
   }
   const filePath = req.file.path; // Assuming the file is uploaded and available at this path
-  await TransactionService.importTransactionsFromCSV(filePath);
+  const userId = req.user._id; // Get userId from the request context
+  await TransactionService.importTransactionsFromCSV(filePath, userId);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

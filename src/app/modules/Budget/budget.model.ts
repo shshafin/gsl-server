@@ -3,6 +3,11 @@ import { IBudget } from './budget.interface';
 
 const budgetSchema = new Schema<IBudget>(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
     accountId: { type: Schema.Types.ObjectId, required: true, ref: 'Account' },
     categoryId: {
       type: Schema.Types.ObjectId,

@@ -5,35 +5,67 @@ import { paginationHelpers } from '../../helpers/paginationHelper';
 import { IPaginationOptions } from '../Category/category.interface';
 import { SortOrder } from 'mongoose';
 
-const createExpense = async (payload: IExpense): Promise<IExpense> => {
-  const expense = await Expense.create(payload);
+const createExpense = async (
+  payload: IExpense,
+  userId: string,
+): Promise<IExpense> => {
+  const expense = await Expense.create({ ...payload, userId });
   return expense;
 };
 
 const getAllExpenses = async (
   filters: IExpenseFilters,
   options: IPaginationOptions,
+  userId: string,
 ) => {
-  const { searchTerm, ...filtersData } = filters;
+  const { searchTerm, dateFrom, dateTo, ...filtersData } = filters;
   const { limit, page, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(options);
 
   const andConditions: any[] = [];
 
+  // userId filter (সবসময় লাগে)
+  andConditions.push({ userId });
+
+  // Search term filter
   if (searchTerm) {
     andConditions.push({
-      $or: ['description'].map((field) => ({
-        [field]: { $regex: searchTerm, $options: 'i' },
-      })),
+      description: { $regex: searchTerm, $options: 'i' },
     });
   }
 
-  if (Object.keys(filtersData).length) {
-    andConditions.push({
-      $and: Object.entries(filtersData).map(([field, value]) => ({
-        [field]: value,
-      })),
-    });
+  // Date range filter
+  if (dateFrom || dateTo) {
+    const dateFilter: any = {};
+
+    if (dateFrom) {
+      const fromDateStr = dateFrom.toString().trim();
+      const fromDate = new Date(fromDateStr);
+      if (!isNaN(fromDate.getTime())) {
+        dateFilter.$gte = fromDate;
+      }
+    }
+
+    if (dateTo) {
+      const toDateStr = dateTo.toString().trim();
+      const toDate = new Date(toDateStr);
+      if (!isNaN(toDate.getTime())) {
+        // দিন শেষে সময় সেট করো যাতে ঐদিনের সব data আসে
+        toDate.setHours(23, 59, 59, 999);
+        dateFilter.$lte = toDate;
+      }
+    }
+
+    if (Object.keys(dateFilter).length > 0) {
+      andConditions.push({ date: dateFilter });
+    }
+  }
+
+  // অন্যান্য filter (accountId, categoryId, type)
+  for (const [field, value] of Object.entries(filtersData)) {
+    if (value) {
+      andConditions.push({ [field]: value });
+    }
   }
 
   const whereConditions =
@@ -63,21 +95,32 @@ const getAllExpenses = async (
   };
 };
 
-const getSingleExpense = async (id: string): Promise<IExpense | null> => {
-  const expense = await Expense.findById(id);
+const getSingleExpense = async (
+  id: string,
+  userId: string,
+): Promise<IExpense | null> => {
+  const expense = await Expense.findOne({ _id: id, userId })
+    .populate('categoryId')
+    .populate('accountId');
   return expense;
 };
 
 const updateExpense = async (
   id: string,
   payload: Partial<IExpense>,
+  userId: string,
 ): Promise<IExpense | null> => {
-  const updated = await Expense.findByIdAndUpdate(id, payload, { new: true });
+  const updated = await Expense.findOneAndUpdate({ _id: id, userId }, payload, {
+    new: true,
+  });
   return updated;
 };
 
-const deleteExpense = async (id: string): Promise<IExpense | null> => {
-  const result = await Expense.findByIdAndDelete(id);
+const deleteExpense = async (
+  id: string,
+  userId: string,
+): Promise<IExpense | null> => {
+  const result = await Expense.findOneAndDelete({ _id: id, userId });
   return result;
 };
 

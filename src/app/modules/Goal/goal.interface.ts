@@ -1,6 +1,7 @@
 import { Types } from 'mongoose';
 
 export interface IGoal {
+  userId: Types.ObjectId; // assuming goals are user-specific
   _id?: Types.ObjectId;
   accountId: Types.ObjectId;
   title: string;
@@ -17,4 +18,5 @@ export interface IGoalFilters {
   searchTerm?: string;
   title?: string;
   categoryId?: string;
+  accountId?: string;
 }

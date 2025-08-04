@@ -9,7 +9,8 @@ import { categoryFilterableFields } from './category.constants';
 import { paginationFields } from '../../constants/constants';
 
 const createCategory = catchAsync(async (req: Request, res: Response) => {
-  const result = await CategoryService.createCategory(req.body);
+  const userId = req.user._id;
+  const result = await CategoryService.createCategory(req.body, userId);
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
@@ -19,17 +20,18 @@ const createCategory = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllCategories = catchAsync(async (req: Request, res: Response) => {
-  // searchTerm ke alada niye ashchi, baki filters pick kore
   const filters = {
     searchTerm: req.query.searchTerm as string | undefined,
     ...pick(req.query, categoryFilterableFields),
   };
 
   const paginationOptions = pick(req.query, paginationFields);
+  const userId = req.user._id;
 
   const result = await CategoryService.getAllCategories(
     filters,
     paginationOptions,
+    userId,
   );
 
   sendResponse(res, {
@@ -42,7 +44,8 @@ const getAllCategories = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getSingleCategory = catchAsync(async (req: Request, res: Response) => {
-  const result = await CategoryService.getSingleCategory(req.params.id);
+  const userId = req.user._id;
+  const result = await CategoryService.getSingleCategory(req.params.id, userId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -52,7 +55,12 @@ const getSingleCategory = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateCategory = catchAsync(async (req: Request, res: Response) => {
-  const result = await CategoryService.updateCategory(req.params.id, req.body);
+  const userId = req.user._id;
+  const result = await CategoryService.updateCategory(
+    req.params.id,
+    req.body,
+    userId,
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -62,7 +70,8 @@ const updateCategory = catchAsync(async (req: Request, res: Response) => {
 });
 
 const deleteCategory = catchAsync(async (req: Request, res: Response) => {
-  const result = await CategoryService.deleteCategory(req.params.id);
+  const userId = req.user._id;
+  const result = await CategoryService.deleteCategory(req.params.id, userId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

@@ -7,44 +7,54 @@ import { SortOrder } from 'mongoose';
 import { paginationHelpers } from '../../helpers/paginationHelper';
 import { IPaginationOptions } from '../Category/category.interface';
 
-const createGoal = async (payload: IGoal) => {
-  const goal = await Goal.create(payload);
+const createGoal = async (payload: IGoal, userId: string) => {
+  const goal = await Goal.create({ ...payload, userId });
   return goal;
 };
 
-const getGoalById = async (goalId: string) => {
-  const goal = await Goal.findOne({ _id: goalId });
+const getGoalById = async (goalId: string, userId: string) => {
+  const goal = await Goal.findOne({ _id: goalId, userId })
+    .populate('categoryId')
+    .populate('accountId');
   if (!goal) {
     throw new AppError(
       httpStatus.NOT_FOUND,
       'Goal not found',
-      'No goal with given ID',
+      'No goal with given ID for this user',
     );
   }
   return goal;
 };
 
-const updateGoal = async (goalId: string, payload: Partial<IGoal>) => {
-  const updatedGoal = await Goal.findOneAndUpdate({ _id: goalId }, payload, {
-    new: true,
-  });
+const updateGoal = async (
+  goalId: string,
+  payload: Partial<IGoal>,
+  userId: string,
+) => {
+  const updatedGoal = await Goal.findOneAndUpdate(
+    { _id: goalId, userId },
+    payload,
+    {
+      new: true,
+    },
+  );
   if (!updatedGoal) {
     throw new AppError(
       httpStatus.NOT_FOUND,
       'Goal not found',
-      'No goal with given ID',
+      'No goal with given ID for this user',
     );
   }
   return updatedGoal;
 };
 
-const deleteGoal = async (goalId: string) => {
-  const deletedGoal = await Goal.findOneAndDelete({ _id: goalId });
+const deleteGoal = async (goalId: string, userId: string) => {
+  const deletedGoal = await Goal.findOneAndDelete({ _id: goalId, userId });
   if (!deletedGoal) {
     throw new AppError(
       httpStatus.NOT_FOUND,
       'Goal not found',
-      'No goal with given ID',
+      'No goal with given ID for this user',
     );
   }
   return deletedGoal;
@@ -53,6 +63,7 @@ const deleteGoal = async (goalId: string) => {
 const getAllGoals = async (
   filters: IGoalFilters,
   paginationOptions: IPaginationOptions,
+  userId: string,
 ) => {
   const { searchTerm, ...filterData } = filters;
   const { limit, page, skip, sortBy, sortOrder } =
@@ -79,6 +90,9 @@ const getAllGoals = async (
     });
   }
 
+  // add userId condition
+  andConditions.push({ userId });
+
   const whereConditions = andConditions.length ? { $and: andConditions } : {};
 
   const sortConditions: { [key: string]: SortOrder } = {};
@@ -87,6 +101,8 @@ const getAllGoals = async (
   }
 
   const result = await Goal.find(whereConditions)
+    .populate('categoryId')
+    .populate('accountId')
     .sort(sortConditions)
     .skip(skip)
     .limit(limit);

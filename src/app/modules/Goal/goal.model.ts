@@ -3,6 +3,11 @@ import { IGoal } from './goal.interface';
 
 const goalSchema = new Schema<IGoal>(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
     accountId: { type: Schema.Types.ObjectId, required: true, ref: 'Account' },
     title: { type: String, required: true },
     targetAmount: { type: Number, required: true },

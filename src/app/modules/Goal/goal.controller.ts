@@ -8,7 +8,8 @@ import { goalFilterableFields } from './goal.constant';
 import { paginationFields } from '../Expense/expense.constants';
 
 const createGoal = catchAsync(async (req: Request, res: Response) => {
-  const goal = await GoalServices.createGoal(req.body);
+  const userId = req.user._id;
+  const goal = await GoalServices.createGoal(req.body, userId);
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
@@ -18,7 +19,8 @@ const createGoal = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getGoalById = catchAsync(async (req: Request, res: Response) => {
-  const goal = await GoalServices.getGoalById(req.params.id);
+  const userId = req.user._id;
+  const goal = await GoalServices.getGoalById(req.params.id, userId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -27,7 +29,12 @@ const getGoalById = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateGoal = catchAsync(async (req: Request, res: Response) => {
-  const updatedGoal = await GoalServices.updateGoal(req.params.id, req.body);
+  const userId = req.user._id;
+  const updatedGoal = await GoalServices.updateGoal(
+    req.params.id,
+    req.body,
+    userId,
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -37,7 +44,8 @@ const updateGoal = catchAsync(async (req: Request, res: Response) => {
 });
 
 const deleteGoal = catchAsync(async (req: Request, res: Response) => {
-  const deletedGoal = await GoalServices.deleteGoal(req.params.id);
+  const userId = req.user._id;
+  const deletedGoal = await GoalServices.deleteGoal(req.params.id, userId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -50,7 +58,12 @@ const getAllGoals = catchAsync(async (req: Request, res: Response) => {
   const filters = pick(req.query, goalFilterableFields);
   const paginationOptions = pick(req.query, paginationFields);
 
-  const result = await GoalServices.getAllGoals(filters, paginationOptions);
+  const userId = req.user._id;
+  const result = await GoalServices.getAllGoals(
+    filters,
+    paginationOptions,
+    userId,
+  );
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

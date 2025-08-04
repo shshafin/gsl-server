@@ -3,6 +3,11 @@ import { ITransaction } from './transaction.interface';
 
 const transactionSchema = new Schema<ITransaction>(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
     accountId: {
       type: Schema.Types.ObjectId,
       ref: 'Account',
