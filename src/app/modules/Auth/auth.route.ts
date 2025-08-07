@@ -3,6 +3,7 @@ import validateRequest from '../../middlewares/validateRequest';
 import { userLoginValidations } from './auth.validation';
 import { AuthControllers, getCurrentUser } from './auth.controller';
 import auth from '../../middlewares/auth';
+import { forgotPassword, resetPassword } from '../User/user.controller';
 
 const router = Router();
 
@@ -18,6 +19,9 @@ router.post(
   validateRequest(userLoginValidations.changePasswordValidationSchema),
   AuthControllers.changePassword,
 );
+
+router.post('/forgot-password', forgotPassword); // Send reset email
+router.post('/reset-password/:token', resetPassword); // Reset password with token
 
 router.get('/me', auth(), getCurrentUser);
 

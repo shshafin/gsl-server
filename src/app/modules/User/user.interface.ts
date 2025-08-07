@@ -7,4 +7,6 @@ export type TUser = {
   password: string;
   createdAt?: Date;
   updatedAt?: Date;
+  passwordResetToken?: string;
+  passwordResetExpires?: number;
 };

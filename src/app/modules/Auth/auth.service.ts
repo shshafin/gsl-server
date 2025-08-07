@@ -7,6 +7,8 @@ import config from '../../config';
 import httpStatus from 'http-status';
 import { PasswordHistory } from '../User/passwordHistory/passwordHistory.model';
 import mongoose from 'mongoose';
+import crypto from 'crypto';
+import { sendEmail } from '../../services/emailService';
 
 // ------------------------------
 // LOGIN SERVICE
@@ -139,7 +141,88 @@ const changePasswordFromDB = async (
   }
 };
 
+// password reset service
+const forgotPassword = async (email: string) => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'User with this email not found',
+      'User not found during forgot password process',
+    );
+  }
+
+  // Generate reset token
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  const resetTokenHashed = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  // Save hashed token and expiry in user document
+  user.passwordResetToken = resetTokenHashed;
+  user.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes from now
+  await user.save({ validateBeforeSave: false });
+
+  // Construct reset URL
+  const resetUrl = `${config.frontend_url}/reset-password/${resetToken}`;
+
+  // Send email (subject and message)
+  const message = `Forgot your password? Click the link to reset your password:\n\n${resetUrl}\n\nIf you didn't request this, ignore this email.`;
+
+  try {
+    await sendEmail({
+      to: user.email,
+      subject: 'Password Reset',
+      text: message,
+    });
+  } catch (error) {
+    // If email sending fails, clean token fields
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    if (!user) {
+      throw new AppError(
+        httpStatus.NOT_FOUND,
+        'User with this email not found',
+        'User not found during forgot password process',
+      );
+    }
+  }
+
+  return true;
+};
+
+const resetPassword = async (token: string, newPassword: string) => {
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+  // Find user with token and check expiry
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() },
+  }).select('+password');
+
+  if (!user) {
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error sending email',
+      'Failed to send password reset email',
+    );
+  }
+
+  // Update password & clear reset token fields
+  user.password = newPassword;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+
+  await user.save();
+
+  return user;
+};
+
 export const AuthServices = {
   loginExistingUser,
   changePasswordFromDB,
+  forgotPassword,
+  resetPassword,
 };

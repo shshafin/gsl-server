@@ -8,6 +8,8 @@ const userSchema = new Schema<TUser>(
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true, select: 0 },
+    passwordResetToken: { type: String },
+    passwordResetExpires: { type: Date },
   },
   {
     timestamps: true,
@@ -15,10 +17,12 @@ const userSchema = new Schema<TUser>(
 );
 
 userSchema.pre('save', async function () {
-  this.password = await bcrypt.hash(
-    this.password,
-    Number(config.bcrypt_salt_rounds),
-  );
+  if (this.isModified('password') && this.password) {
+    this.password = await bcrypt.hash(
+      this.password,
+      Number(config.bcrypt_salt_rounds),
+    );
+  }
 });
 
 export const User = model<TUser>('User', userSchema);
