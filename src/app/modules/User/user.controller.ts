@@ -1,5 +1,7 @@
 import { RequestHandler } from 'express';
 import { UserServices } from './user.service';
+import { AuthServices } from '../Auth/auth.service';
+import httpStatus from 'http-status';
 // import sendResponse from '../../shared/sendResponse';
 // import httpStatus from 'http-status';
 
@@ -24,18 +26,32 @@ const createUser: RequestHandler = async (req, res, next) => {
   }
 };
 
-// const FindSingleUser = async (req: Request, res: Response) => {
-//   const email = req.params.email;
-//   const result = await getSingleUserByEmail(email);
-//   sendResponse<any>(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: 'Get Single User successfully',
-//     data: result,
-//   });
-// };
+export const forgotPassword: RequestHandler = async (req, res, next) => {
+  const { email } = req.body;
+  try {
+    await AuthServices.forgotPassword(email);
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Password reset email sent. Please check your inbox.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
+export const resetPassword: RequestHandler = async (req, res, next) => {
+  const { token } = req.params;
+  const { newPassword } = req.body;
+  try {
+    await AuthServices.resetPassword(token, newPassword);
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Password has been reset successfully.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 export const UserControllers = {
   createUser,
-  // FindSingleUser,
 };

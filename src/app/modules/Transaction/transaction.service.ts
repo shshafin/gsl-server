@@ -116,7 +116,9 @@ const getSingleTransaction = async (
   id: string,
   userId: string,
 ): Promise<ITransaction | null> => {
-  const transaction = await Transaction.findOne({ _id: id, userId });
+  const transaction = await Transaction.findOne({ _id: id, userId }).populate(
+    'accountId categoryId',
+  );
   return transaction;
 };
 
@@ -160,19 +162,27 @@ const importTransactionsFromCSV = async (
 
         for (const row of rows) {
           try {
-            const account = await Account.findOne({ name: row.accountName });
-            const category = await Category.findOne({ name: row.categoryName });
-
+            // Find or optionally create account/category
+            const account = await Account.findOne({
+              name: row.accountName,
+              userId,
+            });
+            const category = await Category.findOne({
+              name: row.categoryName,
+              userId,
+            });
+            // Skip if account or category is not found
             if (!account || !category) {
-              console.warn(
-                `Skipping row due to missing account or category:`,
+              console.warn('Skipping row due to missing account or category:', {
                 row,
-              );
+                missingAccount: !account,
+                missingCategory: !category,
+              });
               continue;
             }
 
             const transaction: ITransaction = {
-              userId: new Types.ObjectId(userId), // <-- added here
+              userId: new Types.ObjectId(userId),
               accountId: account._id,
               categoryId: category._id,
               description: row.description || 'N/A',
@@ -188,6 +198,10 @@ const importTransactionsFromCSV = async (
           } catch (error) {
             console.error('Error processing row:', error);
           }
+        }
+
+        if (transactions.length === 0) {
+          return reject(new Error('No valid transactions found to import.'));
         }
 
         try {
