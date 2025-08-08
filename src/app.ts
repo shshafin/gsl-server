@@ -13,7 +13,7 @@ app.use(
   cors({
     origin: [
       'http://localhost:8080',
-      'https://cash-tracker-client-app.vercel.app',
+      'https://cashtracker.marcelinestudios.com',
     ],
     credentials: true,
   }),
