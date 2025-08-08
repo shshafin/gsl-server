@@ -15,5 +15,4 @@ export default {
   smtp_secure: process.env.SMTP_SECURE,
   smtp_user: process.env.SMTP_USER,
   smtp_pass: process.env.SMTP_PASS,
-  smtp_name: process.env.SMTP_NAME,
 };
