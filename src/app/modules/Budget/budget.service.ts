@@ -17,10 +17,11 @@ const getBudgetsByAccount = async (
 
   const skip = (page - 1) * limit;
 
-  const query: any = { userId }; // Add userId to filter query
+  const query: any = { userId };
   if (type) query.type = type;
   if (categoryId) query.categoryId = categoryId;
 
+  // Step 1: Fetch budgets with pagination & populate
   const budgets = await Budget.find(query)
     .populate('categoryId')
     .populate('accountId')
@@ -30,13 +31,46 @@ const getBudgetsByAccount = async (
 
   const total = await Budget.countDocuments(query);
 
+  // Step 2: Fetch all budgets WITHOUT pagination but WITH same filters and userId,
+  // to calculate remainingBudget correctly on the full data set
+  const allBudgets = await Budget.find({
+    userId,
+    ...(type && { type }),
+    ...(categoryId && { categoryId }),
+  });
+
+  // Step 3: Group by category + recurrence and sum income & spending
+  const grouped: Record<string, { income: number; spending: number }> = {};
+
+  allBudgets.forEach((item) => {
+    const key = `${item.categoryId.toString()}_${item.recurrence}`;
+    if (!grouped[key]) grouped[key] = { income: 0, spending: 0 };
+
+    if (item.type.toLowerCase() === 'income')
+      grouped[key].income += item.amount;
+    else if (item.type.toLowerCase() === 'spending')
+      grouped[key].spending += item.amount;
+  });
+
+  // Step 4: Map over paginated budgets and attach remainingBudget
+  const budgetsWithRemaining = budgets.map((item) => {
+    const key = `${item.categoryId._id.toString()}_${item.recurrence}`;
+    const group = grouped[key] || { income: 0, spending: 0 };
+    const remainingBudget = group.income - group.spending;
+
+    return {
+      ...item.toObject(),
+      remainingBudget,
+    };
+  });
+
   return {
     meta: {
       page,
       limit,
       total,
     },
-    data: budgets,
+    data: budgetsWithRemaining,
   };
 };
 
