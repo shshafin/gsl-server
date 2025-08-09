@@ -43,6 +43,10 @@ const accountSchema = new Schema<IAccount>(
       type: Number,
       required: true,
     },
+    netWorth: {
+      type: Number,
+      default: 0,
+    },
     imageUrl: {
       type: String,
       default: 'https://i.ibb.co/JWcpKNyb/16989577.png',

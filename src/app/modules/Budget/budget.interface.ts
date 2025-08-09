@@ -6,6 +6,7 @@ export interface IBudget {
   accountId: Types.ObjectId;
   categoryId: Types.ObjectId;
   amount: number;
+  remainingBudget?: number;
   note?: string;
   type: 'income' | 'spending';
   recurrence: 'monthly' | 'every_few_months' | 'once';

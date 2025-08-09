@@ -15,6 +15,10 @@ const budgetSchema = new Schema<IBudget>(
       ref: 'Category',
     },
     amount: { type: Number, required: true },
+    remainingBudget: {
+      type: Number,
+      default: 0,
+    },
     note: { type: String },
     type: {
       type: String,
