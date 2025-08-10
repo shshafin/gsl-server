@@ -62,7 +62,7 @@ export const getAllAccountsService = async (
     .sort(sortConditions)
     .skip(skip)
     .limit(limit)
-    .lean(); // lean করলে plain object দিবে, manipulation সহজ হয়
+    .lean();
 
   const total = await Account.countDocuments(whereConditions);
 

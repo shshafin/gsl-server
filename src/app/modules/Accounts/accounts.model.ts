@@ -11,6 +11,7 @@ const accountSchema = new Schema<IAccount>(
     name: {
       type: String,
       required: true,
+      default: 'Default Account', // Default নাম দিতে পারিস
     },
     accountType: {
       type: String,
@@ -24,6 +25,7 @@ const accountSchema = new Schema<IAccount>(
         'Student Loan',
       ],
       required: true,
+      default: 'Savings Account', // enum থেকে একটা default দিতে হবে
     },
     financialInstitution: {
       type: String,
@@ -38,10 +40,12 @@ const accountSchema = new Schema<IAccount>(
         'TD Canada Trust - EasyWeb',
       ],
       required: true,
+      default: 'Bank of Montreal (Canada)', // enum থেকে একটা default দিতে হবে
     },
     initialBalance: {
       type: Number,
       required: true,
+      default: 0,
     },
     netWorth: {
       type: Number,

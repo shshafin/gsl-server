@@ -20,10 +20,11 @@ const transactionSchema = new Schema<ITransaction>(
     },
     description: {
       type: String,
-      default: 'N/A',
+      default: 'N/A', // already good
     },
     date: {
       type: Date,
+      default: Date.now, // ✅ default current date
       required: true,
     },
     debitAmount: {
@@ -41,6 +42,7 @@ const transactionSchema = new Schema<ITransaction>(
     type: {
       type: String,
       enum: ['cash', 'bank'],
+      default: 'cash', // ✅ default type
       required: true,
     },
   },
