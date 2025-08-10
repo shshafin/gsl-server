@@ -162,31 +162,41 @@ const importTransactionsFromCSV = async (
 
         for (const row of rows) {
           try {
-            // Find or optionally create account/category
-            const account = await Account.findOne({
-              name: row.accountName,
+            // ✅ Handle missing account
+            let account = await Account.findOne({
+              name: row.accountName || 'Default Account',
               userId,
             });
-            const category = await Category.findOne({
-              name: row.categoryName,
-              userId,
-            });
-            // Skip if account or category is not found
-            if (!account || !category) {
-              console.warn('Skipping row due to missing account or category:', {
-                row,
-                missingAccount: !account,
-                missingCategory: !category,
+            if (!account) {
+              account = await Account.create({
+                name: row.accountName || 'Default Account',
+                userId,
+                type: 'cash', // default type
+                balance: 0, // default balance
               });
-              continue;
             }
 
+            // ✅ Handle missing category
+            let category = await Category.findOne({
+              name: row.categoryName || 'Default Category',
+              userId,
+            });
+            if (!category) {
+              category = await Category.create({
+                name: row.categoryName || 'Default Category',
+                userId,
+                type: 'essential', // default type
+                isCustom: true,
+              });
+            }
+
+            // ✅ Create transaction with safe defaults
             const transaction: ITransaction = {
               userId: new Types.ObjectId(userId),
               accountId: account._id,
               categoryId: category._id,
-              description: row.description || 'N/A',
-              date: new Date(row.date),
+              description: row.description?.trim() || 'N/A',
+              date: row.date ? new Date(row.date) : new Date(),
               debitAmount: parseFloat(row.debitAmount) || 0,
               creditAmount: parseFloat(row.creditAmount) || 0,
               balance: parseFloat(row.balance) || 0,

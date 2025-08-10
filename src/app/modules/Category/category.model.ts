@@ -17,6 +17,7 @@ const categorySchema = new Schema<ICategory>(
       type: String,
       enum: ['essential', 'non-essential', 'debt'],
       required: true,
+      default: 'essential', // ডিফল্ট দিলাম
     },
     icon: {
       type: String,
@@ -48,5 +49,7 @@ const categorySchema = new Schema<ICategory>(
     timestamps: true,
   },
 );
+
+categorySchema.index({ userId: 1, name: 1 }, { unique: true });
 
 export const Category = model<ICategory>('Category', categorySchema);
