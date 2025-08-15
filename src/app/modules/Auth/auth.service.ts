@@ -14,14 +14,14 @@ import { sendEmail } from '../../services/emailService';
 // LOGIN SERVICE
 // ------------------------------
 const loginExistingUser = async (payload: TUserLogin) => {
-  const user = await User.findOne({ username: payload.username }).select(
+  const user = await User.findOne({ email: payload?.email }).select(
     '+password',
   );
   if (!user) {
     throw new AppError(
       httpStatus.UNAUTHORIZED,
       'Invalid credentials.',
-      'User not found with provided username.',
+      'User not found with provided email.',
     );
   }
 
