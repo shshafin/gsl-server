@@ -4,6 +4,7 @@ import { IExpense, IExpenseFilters } from './expense.interface';
 import { paginationHelpers } from '../../helpers/paginationHelper';
 import { IPaginationOptions } from '../Category/category.interface';
 import { SortOrder } from 'mongoose';
+import { Account } from '../Accounts/accounts.model';
 
 const createExpense = async (
   payload: IExpense,
@@ -27,30 +28,36 @@ const getAllExpenses = async (
   // userId filter (সবসময় লাগে)
   andConditions.push({ userId });
 
-  // Search term filter
+  // 🔎 Search term filter (account.name দিয়ে search)
   if (searchTerm) {
-    andConditions.push({
-      description: { $regex: searchTerm, $options: 'i' },
-    });
+    const accounts = await Account.find({
+      name: { $regex: searchTerm, $options: 'i' },
+    }).select('_id');
+
+    const accountIds = accounts.map((acc) => acc._id);
+
+    if (accountIds.length > 0) {
+      andConditions.push({ accountId: { $in: accountIds } });
+    } else {
+      // কোনো ম্যাচ না হলে খালি result
+      andConditions.push({ accountId: { $in: [] } });
+    }
   }
 
-  // Date range filter
+  // 📅 Date range filter
   if (dateFrom || dateTo) {
     const dateFilter: any = {};
 
     if (dateFrom) {
-      const fromDateStr = dateFrom.toString().trim();
-      const fromDate = new Date(fromDateStr);
+      const fromDate = new Date(dateFrom.toString().trim());
       if (!isNaN(fromDate.getTime())) {
         dateFilter.$gte = fromDate;
       }
     }
 
     if (dateTo) {
-      const toDateStr = dateTo.toString().trim();
-      const toDate = new Date(toDateStr);
+      const toDate = new Date(dateTo.toString().trim());
       if (!isNaN(toDate.getTime())) {
-        // দিন শেষে সময় সেট করো যাতে ঐদিনের সব data আসে
         toDate.setHours(23, 59, 59, 999);
         dateFilter.$lte = toDate;
       }
@@ -71,11 +78,13 @@ const getAllExpenses = async (
   const whereConditions =
     andConditions.length > 0 ? { $and: andConditions } : {};
 
+  // sort
   const sortConditions: { [key: string]: SortOrder } = {};
   if (sortBy && sortOrder) {
     sortConditions[sortBy] = sortOrder;
   }
 
+  // query চালানো
   const result = await Expense.find(whereConditions)
     .populate('categoryId')
     .populate('accountId')
