@@ -4,13 +4,31 @@ import {
   ICategoryFilters,
   IPaginationOptions,
 } from './category.interface';
-import { SortOrder } from 'mongoose';
+import { SortOrder, Types } from 'mongoose';
 import { paginationHelpers } from '../../helpers/paginationHelper';
-import { categorySearchableFields } from './category.constants';
+import {
+  categorySearchableFields,
+  defaultCategories,
+} from './category.constants';
 
 const createCategory = async (payload: ICategory, userId: string) => {
   const category = await Category.create({ ...payload, userId });
   return category;
+};
+const createDefaultCategoriesForUser = async (
+  userId: string | Types.ObjectId,
+) => {
+  for (const cat of defaultCategories) {
+    const exists = await Category.findOne({ userId, name: cat.name });
+    if (!exists) {
+      await Category.create({
+        ...cat,
+        userId,
+        isCustom: false,
+      });
+    }
+  }
+  return await Category.find({ userId });
 };
 
 const getAllCategories = async (
@@ -100,4 +118,5 @@ export const CategoryService = {
   getSingleCategory,
   updateCategory,
   deleteCategory,
+  createDefaultCategoriesForUser,
 };
