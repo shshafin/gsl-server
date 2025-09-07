@@ -81,23 +81,23 @@ const deleteTransaction = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const importCSV = catchAsync(async (req: Request, res: Response) => {
-  if (!req.file) {
-    return res
-      .status(400)
-      .json({ success: false, message: 'CSV file is required' });
-  }
-  const filePath = req.file.path; // Assuming the file is uploaded and available at this path
-  const userId = req.user._id; // Get userId from the request context
-  await TransactionService.importTransactionsFromCSV(filePath, userId);
+// const importCSV = catchAsync(async (req: Request, res: Response) => {
+//   if (!req.file) {
+//     return res
+//       .status(400)
+//       .json({ success: false, message: 'CSV file is required' });
+//   }
+//   const filePath = req.file.path; // Assuming the file is uploaded and available at this path
+//   const userId = req.user._id; // Get userId from the request context
+//   await TransactionService.importTransactionsFromCSV(filePath, userId);
 
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Transactions imported successfully',
-    data: req.file,
-  });
-});
+//   sendResponse(res, {
+//     statusCode: httpStatus.OK,
+//     success: true,
+//     message: 'Transactions imported successfully',
+//     data: req.file,
+//   });
+// });
 
 export const TransactionController = {
   createTransaction,
@@ -105,5 +105,5 @@ export const TransactionController = {
   getSingleTransaction,
   updateTransaction,
   deleteTransaction,
-  importCSV,
+  // importCSV,
 };

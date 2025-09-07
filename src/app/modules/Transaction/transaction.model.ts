@@ -6,17 +6,14 @@ const transactionSchema = new Schema<ITransaction>(
     userId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
     },
     accountId: {
       type: Schema.Types.ObjectId,
       ref: 'Account',
-      required: true,
     },
     categoryId: {
       type: Schema.Types.ObjectId,
       ref: 'Category',
-      required: true,
     },
     description: {
       type: String,
@@ -25,7 +22,6 @@ const transactionSchema = new Schema<ITransaction>(
     date: {
       type: Date,
       default: Date.now, // ✅ default current date
-      required: true,
     },
     debitAmount: {
       type: Number,
@@ -43,7 +39,6 @@ const transactionSchema = new Schema<ITransaction>(
       type: String,
       enum: ['cash', 'bank'],
       default: 'cash', // ✅ default type
-      required: true,
     },
   },
   {
