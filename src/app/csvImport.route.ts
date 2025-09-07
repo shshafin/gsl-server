@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Router } from 'express';
 import multer from 'multer';
 import fs from 'fs';
@@ -99,7 +100,7 @@ router.post('/import-customers', upload.single('file'), (req, res) => {
 // GET - Fetch all customers
 router.get('/customers', async (req, res) => {
   try {
-    const customers = await Customer.find().sort({ name: 1 }); // নাম অনুযায়ী সাজানো
+    const customers = await Customer.find().sort({ name: 1 });
     res.status(200).json(customers);
   } catch (err) {
     console.error('Error fetching customers:', err);

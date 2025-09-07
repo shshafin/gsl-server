@@ -7,6 +7,7 @@ import { BudgetRoutes } from '../modules/Budget/budget.route';
 import { GoalRoutes } from '../modules/Goal/goal.route';
 import { AccountRoutes } from '../modules/Accounts/accounts.route';
 import { TransactionRoutes } from '../modules/Transaction/transaction.route';
+import { CsvRoutes } from '../modules/CsvTemp/CsvTemp.route';
 
 const router = Router();
 
@@ -42,6 +43,10 @@ const moduleRoute = [
   {
     path: '/transactions',
     route: TransactionRoutes,
+  },
+  {
+    path: '/csv-temp',
+    route: CsvRoutes,
   },
 ];
 

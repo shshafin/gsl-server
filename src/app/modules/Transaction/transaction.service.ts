@@ -2,10 +2,10 @@
 import { ITransaction } from './transaction.interface';
 import { FilterQuery, SortOrder } from 'mongoose';
 import { Transaction } from './transaction.model';
-import fs from 'fs';
-import csvParser from 'csv-parser';
-import { Account } from '../Accounts/accounts.model';
-import { Category } from '../Category/category.model';
+// import fs from 'fs';
+// import csvParser from 'csv-parser';
+// import { Account } from '../Accounts/accounts.model';
+// import { Category } from '../Category/category.model';
 
 interface IFilters {
   accountId?: string;
@@ -143,89 +143,87 @@ const deleteTransaction = async (
   return deleted;
 };
 
-import { Types } from 'mongoose';
+// const importTransactionsFromCSV = async (
+//   filePath: string,
+//   userId: string,
+// ): Promise<void> => {
+//   const rows: any[] = [];
 
-const importTransactionsFromCSV = async (
-  filePath: string,
-  userId: string,
-): Promise<void> => {
-  const rows: any[] = [];
+//   return new Promise((resolve, reject) => {
+//     fs.createReadStream(filePath)
+//       .pipe(csvParser())
+//       .on('data', (row) => {
+//         rows.push(row);
+//       })
+//       .on('end', async () => {
+//         const transactions: ITransaction[] = [];
 
-  return new Promise((resolve, reject) => {
-    fs.createReadStream(filePath)
-      .pipe(csvParser())
-      .on('data', (row) => {
-        rows.push(row);
-      })
-      .on('end', async () => {
-        const transactions: ITransaction[] = [];
+//         for (const row of rows) {
+//           try {
+//             // ✅ Handle missing account
+//             let account = await Account.findOne({
+//               name: row.accountName || 'Default Account',
+//               userId,
+//             });
+//             if (!account) {
+//               account = await Account.create({
+//                 name: row.accountName || 'Default Account',
+//                 userId,
+//                 type: 'cash', // default type
+//                 balance: 0, // default balance
+//               });
+//             }
 
-        for (const row of rows) {
-          try {
-            // ✅ Handle missing account
-            let account = await Account.findOne({
-              name: row.accountName || 'Default Account',
-              userId,
-            });
-            if (!account) {
-              account = await Account.create({
-                name: row.accountName || 'Default Account',
-                userId,
-                type: 'cash', // default type
-                balance: 0, // default balance
-              });
-            }
+//             // ✅ Handle missing category
+//             let category = await Category.findOne({
+//               name: row.categoryName || 'Default Category',
+//               userId,
+//             });
+//             if (!category) {
+//               category = await Category.create({
+//                 name: row.categoryName || 'Default Category',
+//                 userId,
+//                 type: 'essential', // default type
+//                 isCustom: true,
+//               });
+//             }
 
-            // ✅ Handle missing category
-            let category = await Category.findOne({
-              name: row.categoryName || 'Default Category',
-              userId,
-            });
-            if (!category) {
-              category = await Category.create({
-                name: row.categoryName || 'Default Category',
-                userId,
-                type: 'essential', // default type
-                isCustom: true,
-              });
-            }
+//             // ✅ Create transaction with safe defaults
+//             const transaction: ITransaction = {
+//               userId: new Types.ObjectId(userId),
+//               accountId: account._id,
+//               categoryId: category._id,
+//               description: row.description?.trim() || 'N/A',
+//               date: row.date ? new Date(row.date) : new Date(),
+//               debitAmount: parseFloat(row.debitAmount) || 0,
+//               creditAmount: parseFloat(row.creditAmount) || 0,
+//               balance: parseFloat(row.balance) || 0,
+//               type:
+//                 row.type === 'cash' || row.type === 'bank' ? row.type : 'cash',
+//             };
 
-            // ✅ Create transaction with safe defaults
-            const transaction: ITransaction = {
-              userId: new Types.ObjectId(userId),
-              accountId: account._id,
-              categoryId: category._id,
-              description: row.description?.trim() || 'N/A',
-              date: row.date ? new Date(row.date) : new Date(),
-              debitAmount: parseFloat(row.debitAmount) || 0,
-              creditAmount: parseFloat(row.creditAmount) || 0,
-              balance: parseFloat(row.balance) || 0,
-              type:
-                row.type === 'cash' || row.type === 'bank' ? row.type : 'cash',
-            };
+//             transactions.push(transaction);
+//           } catch (error) {
+//             console.error('Error processing row:', error);
+//           }
+//         }
 
-            transactions.push(transaction);
-          } catch (error) {
-            console.error('Error processing row:', error);
-          }
-        }
+//         if (transactions.length === 0) {
+//           return reject(new Error('No valid transactions found to import.'));
+//         }
 
-        if (transactions.length === 0) {
-          return reject(new Error('No valid transactions found to import.'));
-        }
-
-        try {
-          await Transaction.insertMany(transactions);
-          resolve();
-        } catch (err) {
-          reject(err);
-        }
-      })
-      .on('error', (error) => {
-        reject(error);
-      });
-  });
-};
+//         try {
+//           await Transaction.insertMany(transactions);
+//           resolve();
+//         } catch (err) {
+//           reject(err);
+//         }
+//       })
+//       .on('error', (error) => {
+//         reject(error);
+//       });
+//   });
+// };
 
 export const TransactionService = {
   createTransaction,
@@ -233,5 +231,5 @@ export const TransactionService = {
   getSingleTransaction,
   updateTransaction,
   deleteTransaction,
-  importTransactionsFromCSV,
+  // importTransactionsFromCSV,
 };

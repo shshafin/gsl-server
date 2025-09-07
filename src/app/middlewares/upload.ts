@@ -3,10 +3,8 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 
-// uploads ফোল্ডারের সম্পূর্ণ পাথ
 const uploadPath = path.join(__dirname, '/uploads');
 
-// ফোল্ডারটা আগে থেকে না থাকলে বানিয়ে নাও
 if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath, { recursive: true });
 }
