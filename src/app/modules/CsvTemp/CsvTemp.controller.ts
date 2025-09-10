@@ -78,17 +78,29 @@ export const CsvTempController = {
   },
 
   // Finalize batch → insert into transactions
+  // controller
   async finalize(req: Request, res: Response) {
+    console.log('🔥 Finalize request body:', JSON.stringify(req.body, null, 2));
+
     try {
       const userId = req.user._id;
-      const { batchId, accountId } = req.body;
+      const { batchId, accountId, mapping } = req.body;
+
+      // sanity check
+      if (!batchId || !accountId || !mapping) {
+        console.error('❌ Missing fields:', { batchId, accountId, mapping });
+      }
+
       const result = await CsvTempService.finalizeBatch(
         userId,
         batchId,
         accountId,
+        mapping,
       );
+
       res.json({ success: true, message: 'Transactions created', ...result });
     } catch (err: any) {
+      console.error('❌ Finalize error:', err);
       res.status(500).json({ success: false, message: err.message });
     }
   },

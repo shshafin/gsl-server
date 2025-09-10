@@ -17,7 +17,7 @@ const categorySchema = new Schema<ICategory>(
       type: String,
       enum: ['essential', 'non-essential', 'debt'],
       required: true,
-      default: 'essential', // ডিফল্ট দিলাম
+      default: 'essential',
     },
     icon: {
       type: String,
