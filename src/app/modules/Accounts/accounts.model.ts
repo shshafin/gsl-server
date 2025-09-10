@@ -40,11 +40,15 @@ const accountSchema = new Schema<IAccount>(
         'TD Canada Trust - EasyWeb',
       ],
       required: true,
-      default: 'Bank of Montreal (Canada)', // enum থেকে একটা default দিতে হবে
+      default: 'Bank of Montreal (Canada)',
     },
     initialBalance: {
       type: Number,
       required: true,
+      default: 0,
+    },
+    currentBalance: {
+      type: Number,
       default: 0,
     },
     netWorth: {

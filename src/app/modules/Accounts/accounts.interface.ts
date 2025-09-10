@@ -26,6 +26,7 @@ export interface IAccount {
   accountType: AccountType;
   financialInstitution: FinancialInstitution;
   initialBalance: number;
+  currentBalance?: number;
   netWorth?: any; // Auto assigned based on transaction
   imageUrl?: string; // Auto assigned based on institution
   createdAt?: Date;
