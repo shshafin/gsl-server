@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { v4 as uuidv4 } from 'uuid';
 import { CsvTemp } from './CsvTemp.model';
 import { Transaction } from '../Transaction/transaction.model';

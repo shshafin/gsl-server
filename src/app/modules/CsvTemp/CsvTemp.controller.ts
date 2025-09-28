@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Request, Response } from 'express';
 import { CsvTempService } from './CsvTemp.service';
 import csvParser from 'csv-parser';
