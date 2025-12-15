@@ -13,7 +13,7 @@ app.use(
     origin: [
       'http://localhost:3000',
       'https://gsl-client.vercel.app',
-      'https://gsl-client.onrender.com',
+      'https://gsl-client.onrender.com/',
     ],
     credentials: true,
   }),
