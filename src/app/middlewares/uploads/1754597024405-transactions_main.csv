@@ -1,6 +1,0 @@
-accountName,categoryName,description,date,debitAmount,creditAmount,balance,type
-My Royal Bank Card,category-1,Lunch with friends,5/17/2025,1200,0,5000,cash
-My Royal Bank Card,category-1,Salary,5/1/2025,0,30000,35000,bank
-My Royal Bank Card,category-1,Groceries,5/10/2025,4500,0,30500,cash
-My Royal Bank Card,category-1,Sold old bike,5/15/2025,0,15000,45500,bank
-My Royal Bank Card,category-1,Movie tickets,5/18/2025,600,0,44900,cash

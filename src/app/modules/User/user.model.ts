@@ -1,28 +1,53 @@
 import { Schema, model } from 'mongoose';
-import { TUser } from './user.interface';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
+import { IUser, UserModel } from './user.interface';
 import config from '../../config';
 
-const userSchema = new Schema<TUser>(
+const UserSchema = new Schema<IUser, UserModel>(
   {
-    username: { type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true, select: 0 },
-    passwordResetToken: { type: String },
-    passwordResetExpires: { type: Date },
+    name: {
+      type: String,
+      required: [true, 'Name is required'],
+    },
+    email: {
+      type: String,
+      required: [true, 'Email is required'],
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: [true, 'Password is required'],
+      select: 0, // Security: Do not return password by default in queries
+    },
+    role: {
+      type: String,
+      enum: ['super_admin', 'admin', 'moderator'],
+      default: 'admin',
+    },
+    image: {
+      type: String,
+      default: '',
+    },
   },
   {
     timestamps: true,
   },
 );
 
-userSchema.pre('save', async function () {
-  if (this.isModified('password') && this.password) {
-    this.password = await bcrypt.hash(
-      this.password,
-      Number(config.bcrypt_salt_rounds),
-    );
-  }
+// Pre-save middleware: Hash password automatically
+UserSchema.pre('save', async function (next) {
+  // Only hash the password if it has been modified (or is new)
+  if (!this.isModified('password')) return next();
+
+  // Hash using bcrypt (salt rounds usually 10 or 12)
+  this.password = await bcrypt.hash(
+    this.password,
+    Number(config.bcrypt_salt_rounds) || 12,
+  );
+  next();
 });
 
-export const User = model<TUser>('User', userSchema);
+// Create the Model
+export const User = model<IUser, UserModel>('User', UserSchema);

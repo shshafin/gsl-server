@@ -21,14 +21,15 @@ async function main() {
 
 main();
 
-process.on('unhandledRejection', () => {
-  console.log(`😈🙉 unhandledRejection is detected. Shutting down...`);
+process.on('unhandledRejection', (err) => {
+  console.log(`😈 unhandledRejection is detected , shutting down ...`, err);
   if (server) {
     server.close(() => {
       process.exit(1);
     });
+  } else {
+    process.exit(1);
   }
-  process.exit(1);
 });
 
 process.on('uncaughtException', () => {

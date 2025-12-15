@@ -1,12 +1,18 @@
-import { Date, Types } from 'mongoose';
+import { Model, Document } from 'mongoose';
 
-export type TUser = {
-  _id?: Types.ObjectId;
-  username: string;
+export type TUserRole = 'super_admin' | 'admin' | 'moderator';
+
+export interface IUser extends Document {
+  name: string;
   email: string;
   password: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  passwordResetToken?: string;
-  passwordResetExpires?: number;
-};
+  image?: string; // Optional profile photo
+  role: TUserRole;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Interface for the static model methods (if we need custom statics later)
+export interface UserModel extends Model<IUser> {
+  // Example: isUserExists(email: string): Promise<IUser | null>;
+}

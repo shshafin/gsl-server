@@ -1,57 +1,92 @@
-import { RequestHandler } from 'express';
-import { UserServices } from './user.service';
-import { AuthServices } from '../Auth/auth.service';
+import { Request, Response } from 'express';
+import { UserService } from './user.service';
 import httpStatus from 'http-status';
-// import sendResponse from '../../shared/sendResponse';
-// import httpStatus from 'http-status';
+import catchAsync from '../../shared/catchAsync';
+import sendResponse from '../../shared/sendResponse';
+import handleImageUpload from '../../helpers/handleImageUpload';
 
-const createUser: RequestHandler = async (req, res, next) => {
-  try {
-    const result = await UserServices.createUserIntoDB(req.body);
-    const { _id, username, email, createdAt, updatedAt } = result;
+// Create User (Admin/Moderator)
+const createUser = catchAsync(async (req: Request, res: Response) => {
+  // If this throws, catchAsync MUST catch it
+  const imageUrl = await handleImageUpload(req);
 
-    res.status(201).json({
-      success: true,
-      message: 'User registered successfully',
-      data: {
-        _id,
-        username,
-        email,
-        createdAt,
-        updatedAt,
-      },
-    });
-  } catch (err) {
-    next(err);
+  if (imageUrl) {
+    req.body.image = imageUrl;
   }
-};
 
-export const forgotPassword: RequestHandler = async (req, res, next) => {
-  const { email } = req.body;
-  try {
-    await AuthServices.forgotPassword(email);
-    res.status(httpStatus.OK).json({
-      success: true,
-      message: 'Password reset email sent. Please check your inbox.',
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  const result = await UserService.createUserIntoDB(req.body);
 
-export const resetPassword: RequestHandler = async (req, res, next) => {
-  const { token } = req.params;
-  const { newPassword } = req.body;
-  try {
-    await AuthServices.resetPassword(token, newPassword);
-    res.status(httpStatus.OK).json({
-      success: true,
-      message: 'Password has been reset successfully.',
-    });
-  } catch (error) {
-    next(error);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User created successfully',
+    data: result,
+  });
+});
+
+// Get All Users
+const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserService.getAllUsersFromDB(req.query);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Users retrieved successfully',
+    data: result,
+  });
+});
+
+// Get Single User
+const getSingleUser = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await UserService.getSingleUserFromDB(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User retrieved successfully',
+    data: result,
+  });
+});
+
+// Update User
+const updateUser = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  // Check for image and upload if present
+  const imageUrl = await handleImageUpload(req);
+
+  if (imageUrl) {
+    req.body.image = imageUrl;
   }
-};
-export const UserControllers = {
+
+  const result = await UserService.updateUserIntoDB(id, req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User updated successfully',
+    data: result,
+  });
+});
+
+// Delete User
+const deleteUser = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  await UserService.deleteUserFromDB(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User deleted successfully',
+    data: null,
+  });
+});
+
+export const UserController = {
   createUser,
+  getAllUsers,
+  getSingleUser,
+  updateUser,
+  deleteUser,
 };

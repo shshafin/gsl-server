@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import { AuthRoutes } from '../modules/Auth/auth.route';
 import { UserRoutes } from '../modules/User/user.route';
-import { CategoryRoutes } from '../modules/Category/category.route';
-import { ExpenseRoutes } from '../modules/Expense/expense.route';
-import { BudgetRoutes } from '../modules/Budget/budget.route';
-import { GoalRoutes } from '../modules/Goal/goal.route';
-import { AccountRoutes } from '../modules/Accounts/accounts.route';
-import { TransactionRoutes } from '../modules/Transaction/transaction.route';
-import { CsvRoutes } from '../modules/CsvTemp/CsvTemp.route';
+import { ProductRoutes } from '../modules/Product/product.route';
+import { BlogRoutes } from '../modules/Blog/blog.route';
+import { TeamRoutes } from '../modules/Team/team.route';
+import { FaqRoutes } from '../modules/Faq/faq.route';
+import { ResourceRoutes } from '../modules/Resource/resource.route';
+import { ContactRoutes } from '../modules/Contact/contact.route';
+import { SiteSettingRoutes } from '../modules/SiteSettings/siteSetting.route';
 
 const router = Router();
 
@@ -21,32 +21,32 @@ const moduleRoute = [
     route: UserRoutes,
   },
   {
-    path: '/categories',
-    route: CategoryRoutes,
+    path: '/products',
+    route: ProductRoutes,
   },
   {
-    path: '/expenses',
-    route: ExpenseRoutes,
+    path: '/blogs',
+    route: BlogRoutes,
   },
   {
-    path: '/budgets',
-    route: BudgetRoutes,
+    path: '/teams',
+    route: TeamRoutes,
   },
   {
-    path: '/goals',
-    route: GoalRoutes,
+    path: '/faqs',
+    route: FaqRoutes,
   },
   {
-    path: '/accounts',
-    route: AccountRoutes,
+    path: '/resources',
+    route: ResourceRoutes,
   },
   {
-    path: '/transactions',
-    route: TransactionRoutes,
+    path: '/contacts',
+    route: ContactRoutes,
   },
   {
-    path: '/csv-temp',
-    route: CsvRoutes,
+    path: '/site-settings',
+    route: SiteSettingRoutes,
   },
 ];
 

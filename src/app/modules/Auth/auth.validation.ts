@@ -1,15 +1,12 @@
 import { z } from 'zod';
 
-const userLoginValidationSchema = z.object({
-  email: z.string({ required_error: 'email is required!' }),
-  password: z.string({ required_error: 'Please enter your password!' }),
-});
-const changePasswordValidationSchema = z.object({
-  currentPassword: z.string({ required_error: 'Old Password is required!' }),
-  newPassword: z.string({ required_error: 'Please enter your password!' }),
+const loginValidationSchema = z.object({
+  body: z.object({
+    email: z.string({ required_error: 'Email is required' }).email(),
+    password: z.string({ required_error: 'Password is required' }),
+  }),
 });
 
-export const userLoginValidations = {
-  userLoginValidationSchema,
-  changePasswordValidationSchema,
+export const AuthValidation = {
+  loginValidationSchema,
 };
