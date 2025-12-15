@@ -1,6 +1,0 @@
-accountName,categoryName,description,date,debitAmount,creditAmount,balance,type
-My American Express Card,Groceries,"Lunch with friends",2025-05-17,1200,0,5000,cash
-My American Express Card,Groceries,"Salary",2025-05-01,0,30000,35000,bank
-My American Express Card,Groceries,"Groceries",2025-05-10,4500,0,30500,cash
-My American Express Card,Groceries,"Sold old bike",2025-05-15,0,15000,45500,bank
-My American Express Card,Groceries,"Movie tickets",2025-05-18,600,0,44900,cash
