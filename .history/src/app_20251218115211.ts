@@ -14,7 +14,7 @@ app.use(
       'http://localhost:3000',
       'https://gsl-client.vercel.app',
       'https://gsl-client.onrender.com',
-      'https://gsl-client.netlify.app',
+      'https://gsl-client.netlify.app/',
     ],
     credentials: true,
   }),
