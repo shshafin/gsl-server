@@ -5,19 +5,11 @@ const ProductSchema = new Schema<IProduct>(
   {
     name: {
       type: String,
-      required: true,
       trim: true,
     },
     category: {
       type: String,
-      enum: [
-        'Plush',
-        'Plastic',
-        'Educational',
-        'Electronic',
-        'Wooden',
-        'Others',
-      ],
+      enum: ['Soft Toy', 'Plastic Toy', 'Baby Accessories', 'Others'],
       required: true,
     },
     images: {
@@ -26,7 +18,6 @@ const ProductSchema = new Schema<IProduct>(
     },
     description: {
       type: String,
-      required: true,
     },
     price: {
       type: Number,
