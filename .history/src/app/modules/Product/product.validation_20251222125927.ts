@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const createProductValidationSchema = z.object({
   body: z.object({
-    name: z.string().optional(),
+    name: z.string({ required_error: 'Product Name is required' }),
     category: z.enum(
       ['Soft Toy', 'Plastic Toy', 'Baby Accessories', 'Others'],
       {
@@ -10,7 +10,7 @@ const createProductValidationSchema = z.object({
       },
     ),
     images: z.array(z.string()).optional(), // Array of strings (URLs)
-    description: z.string(),
+    description: z.string({ required_error: 'Description is required' }),
     price: z.number().optional(),
     isFeatured: z.boolean().optional(),
   }),

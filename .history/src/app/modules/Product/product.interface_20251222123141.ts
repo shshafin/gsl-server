@@ -7,10 +7,10 @@ export type TProductCategory =
   | 'Others';
 
 export interface IProduct extends Document {
-  name?: string;
+  name: string;
   category: TProductCategory;
   images: string[]; // Array of image URLs
-  description?: string;
+  description: string;
   price?: number; // Optional
   isFeatured: boolean; // For Home Page Slider
   createdAt: Date;

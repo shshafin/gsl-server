@@ -5,6 +5,7 @@ const ProductSchema = new Schema<IProduct>(
   {
     name: {
       type: String,
+      required: true,
       trim: true,
     },
     category: {
@@ -18,6 +19,7 @@ const ProductSchema = new Schema<IProduct>(
     },
     description: {
       type: String,
+      required: true,
     },
     price: {
       type: Number,

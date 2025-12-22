@@ -10,7 +10,7 @@ const createProductValidationSchema = z.object({
       },
     ),
     images: z.array(z.string()).optional(), // Array of strings (URLs)
-    description: z.string(),
+    description: z.string({ required_error: 'Description is required' }),
     price: z.number().optional(),
     isFeatured: z.boolean().optional(),
   }),
