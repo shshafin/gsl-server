@@ -3,12 +3,9 @@ import { z } from 'zod';
 const createProductValidationSchema = z.object({
   body: z.object({
     name: z.string().optional(),
-    category: z.enum(
-      ['Soft Toy', 'Plastic Toy', 'Baby Accessories', 'Others'],
-      {
-        required_error: 'Category is required',
-      },
-    ),
+    category: z.enum(['Soft Toy', 'Pet Toy', 'Baby Accessories', 'Others'], {
+      required_error: 'Category is required',
+    }),
     images: z.array(z.string()).optional(), // Array of strings (URLs)
     description: z.string(),
     price: z.number().optional(),
@@ -20,7 +17,7 @@ const updateProductValidationSchema = z.object({
   body: z.object({
     name: z.string().optional(),
     category: z
-      .enum(['Soft Toy', 'Plastic Toy', 'Baby Accessories', 'Others'])
+      .enum(['Soft Toy', 'Pet Toy', 'Baby Accessories', 'Others'])
       .optional(),
     images: z.array(z.string()).optional(),
     description: z.string().optional(),
