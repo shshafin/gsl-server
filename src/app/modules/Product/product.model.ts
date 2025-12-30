@@ -9,7 +9,7 @@ const ProductSchema = new Schema<IProduct>(
     },
     category: {
       type: String,
-      enum: ['Soft Toy', 'Plastic Toy', 'Baby Accessories', 'Others'],
+      enum: ['Soft Toy', 'Pet Toy', 'Baby Accessories', 'Others'],
       required: true,
     },
     images: {

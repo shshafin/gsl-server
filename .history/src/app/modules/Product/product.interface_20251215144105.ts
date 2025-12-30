@@ -2,7 +2,7 @@ import { Document } from 'mongoose';
 
 export type TProductCategory =
   | 'Plush'
-  | 'Plastic'
+  | 'Pet'
   | 'Educational'
   | 'Electronic'
   | 'Wooden'
