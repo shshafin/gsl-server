@@ -1,74 +1,80 @@
-# authentication-authorization
+# GSL Server
 
-## livelink:()
+A TypeScript Express backend designed for secure, scalable application APIs with authentication, file handling, validation, and database integration.
 
-# authentication-authorization - Project Initialization and Setup
+## Overview
 
-## Description
+This server provides the API foundation for the GSL platform and includes:
+- user authentication and authorization
+- MongoDB integration with Mongoose
+- input validation with Zod
+- file uploads with Multer and Cloudinary
+- email notifications
+- cron-based scheduled tasks
+- structured logging and error handling
 
-This project is a TypeScript-based backend application using Express, MongoDB with Mongoose, and other essential libraries for authentication and security.
+## Tech Stack
 
-## Prerequisites
+- Node.js
+- TypeScript
+- Express.js
+- MongoDB + Mongoose
+- JWT + bcrypt
+- Zod
+- Cloudinary
+- Nodemailer
+- CSV utilities
+- Node-cron
 
-Make sure you have the following installed on your machine:
+## Features
 
-- [Node.js](https://nodejs.org/) (v14 or higher)
-- [npm](https://www.npmjs.com/) (v6 or higher)
-- [MongoDB](https://www.mongodb.com/) (Make sure it's running)
+- secure REST API design
+- role-aware auth flows
+- scalable backend structure
+- modular service/controller architecture
+- environment-based configuration
+- production-ready TypeScript build setup
 
-## Installation
+## Run Locally
 
-1. **Clone the repository:**
-   ```bash
-   git clone <repository-url>
-   ```
-2. **Change into the project directory:**
-   ```bash
-   cd authentication-authorization
-   ```
-3. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-## Configuration
-
-1. Create a `.env` file in the project root and set the following environment variables:
-   ```env
-   PORT=5000
-   MONGODB_URI=<your-mongodb-uri>
-   JWT_SECRET=<your-secret-key>
-   ```
-   Replace `<your-mongodb-uri>` with your actual MongoDB connection URI and `<your-secret-key>` with a secure secret key for JWT.
+```bash
+git clone https://github.com/shshafin/gsl-server.git
+cd gsl-server
+npm install
+npm run start:dev
+```
 
 ## Scripts
 
-- `npm run build`: Build the TypeScript code.
-- `npm start`: Start the server (after building).
-- `npm run start:dev`: Start the server in development mode with automatic restarts on code changes.
-- `npm run lint`: Run ESLint to lint TypeScript files.
-- `npm run lint:fix`: Run ESLint and automatically fix fixable issues.
-- `npm run prettier`: Run Prettier to format code.
-- `npm run prettier:fix`: Run Prettier and automatically fix formatting issues.
-- `npm test`: Run tests (not implemented in this template).
-
-## Usage
-
-1. **Build the project:**
-   ```bash
-   npm run build
-   ```
-2. **Start the server:**
-   ```bash
-   npm start
-   ```
-3. **Access the API at** `http://localhost:5000` (or the port you specified in the `.env` file).
-
-## Development
-
-For development with automatic restarts on code changes, use:
-
 ```bash
 npm run start:dev
-
+npm run build
+npm start
+npm run lint
+npm run lint:fix
+npm run prettier:fix
 ```
+
+## Environment Variables
+
+Create a `.env` file:
+
+```env
+PORT=5000
+MONGODB_URI=your_mongodb_uri
+JWT_SECRET=your_secret_key
+CLOUDINARY_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
+
+## Related
+
+- Client: https://github.com/shshafin/gsl-client
+- Portfolio: https://shafinsadnan.com
+
+## Author
+
+Shafin Sadnan
+
+GitHub: https://github.com/shshafin
